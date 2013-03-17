@@ -1,5 +1,10 @@
 require 'open-uri'
 
-url = 'http://en.wikipedia.org/wiki/V_for_vendetta'
-source = open(url).read
-puts source
+WIKIPEDIA_DOMAIN = 'http://en.wikipedia.org'
+
+resource = ARGV[0]
+
+url = "#{WIKIPEDIA_DOMAIN}/wiki/#{resource}"
+
+response = open(url).read
+puts response
