@@ -40,7 +40,7 @@ end
 
 # example ARGV: ["-r", "Ruby_on_Rails", "-s", "links"]
 params = {}
-args = ARGV
+args = ARGV.clone
 while args.size != 0
   flag = args.shift.gsub(/\A-/,"")
  
@@ -59,4 +59,4 @@ end
 
 wp = Page.new params['r']
 wp.download.get_data
-puts wp.heading
+puts ARGV
