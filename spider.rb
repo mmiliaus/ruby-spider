@@ -91,4 +91,8 @@ end
 wp = Wikipedia::Page.new params[:r]
 wp.download.get_data
 
-puts wp.heading
+f_links = Wikipedia::Page.filter_links(
+                [:hash_tags, :double_slashes], 
+                wp.links
+          ) { |url| url.match(/wiki\/.+:.+/) }
+puts f_links
