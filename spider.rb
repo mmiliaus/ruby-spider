@@ -14,7 +14,16 @@ def get_abstract source_html
   m[1]
 end
 
+def get_heading source_html
+  m = source_html.match(/<h1.*>(.+?)<\/h1>/im)
+  m[1].gsub(/<\/?.+>/, "")
+end
+
+def get_links source_html
+  source_html.scan(/<a.+?href="(.+?)"/im).flatten
+end
+
 url = "#{WIKIPEDIA_DOMAIN}/wiki/#{resource}"
 source = open(url).read
 
-puts get_abstract(source)
+puts get_heading(source)
