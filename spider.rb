@@ -46,6 +46,12 @@ class Page
       filtered_links = self.filter_double_slashes filtered_links
     end
 
+    if block_given?
+      filtered_links = filtered_links.select do |url| 
+        not yield(url)
+      end
+    end
+
     filtered_links
   end
   
@@ -85,5 +91,5 @@ wp.download.get_data
 f_links = Page.filter_links(
                 [:hash_tags, :double_slashes], 
                 wp.links
-          )
+          ) { |url| url.match(/wiki\/.+:.+/) }
 puts f_links
