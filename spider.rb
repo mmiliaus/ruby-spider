@@ -10,6 +10,8 @@ end
 
 class Page
 
+  attr_accessor :heading, :abstract, :links
+
   def initialize resource
     @resource = resource
   end
