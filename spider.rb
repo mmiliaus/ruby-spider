@@ -2,12 +2,6 @@ require 'open-uri'
 
 WIKIPEDIA_DOMAIN = 'http://en.wikipedia.org'
 
-resource = ARGV[0]
-if resource.nil?
-  puts %Q(Please provide resource name, i.e.: "Spacex", "V_for_vendetta")
-  exit
-end
-
 class Page
 
   attr_accessor :heading, :abstract, :links
@@ -43,6 +37,13 @@ class Page
   end
 
 end
+
+resource = ARGV[0]
+if resource.nil?
+  puts %Q(Please provide resource name, i.e.: "Spacex", "V_for_vendetta")
+  exit
+end
+
 
 wp = Page.new resource
 wp.download.get_data
