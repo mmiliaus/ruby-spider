@@ -36,6 +36,27 @@ class Page
     source_html.scan(/<a.+?href="(.+?)"/im).flatten
   end
 
+  def self.filter_links filters, links
+    filtered_links = links
+    if filters.include? :hash_tags
+      filtered_links = self.filter_hash_tags filtered_links
+    end
+
+    if filters.include? :double_slashes
+      filtered_links = self.filter_double_slashes filtered_links
+    end
+
+    filtered_links
+  end
+  
+  def self.filter_hash_tags links
+    links.select{|url| not url.match(/\A#/)}
+  end
+
+  def self.filter_double_slashes links
+    links.select{|url| not url.match(/\/\//)}
+  end
+
 end
 
 # example ARGV: ["-r", "Ruby_on_Rails", "-s", "links"]
@@ -60,4 +81,9 @@ end
 
 wp = Page.new params[:r]
 wp.download.get_data
-puts wp.heading
+
+f_links = Page.filter_links(
+                [:hash_tags, :double_slashes], 
+                wp.links
+          )
+puts f_links
