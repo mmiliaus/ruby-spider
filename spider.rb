@@ -43,6 +43,7 @@ params = {}
 args = ARGV.clone
 while args.size != 0
   flag = args.shift.gsub(/\A-/,"")
+  flag = flag.to_sym
  
   if args.size > 0 && !args.first.match(/\A-/)
     params[flag] = args.shift
@@ -51,12 +52,12 @@ while args.size != 0
   end
 end
 
-if !params.include?('r')
+if !params.include?(:r)
   puts %Q(Please provide resource name, i.e.: "Spacex", "V_for_vendetta")
   exit
 end
 
 
-wp = Page.new params['r']
+wp = Page.new params[:r]
 wp.download.get_data
-puts ARGV
+puts wp.heading
