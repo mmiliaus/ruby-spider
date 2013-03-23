@@ -4,9 +4,41 @@ WIKIPEDIA_DOMAIN = 'http://en.wikipedia.org'
 
 module Wikipedia
 
+  module Filters
+    def filter_links filters, links
+      filtered_links = links
+      if filters.include? :hash_tags
+        filtered_links = self.filter_hash_tags filtered_links
+      end
+
+      if filters.include? :double_slashes
+        filtered_links = self.filter_double_slashes filtered_links
+      end
+
+      if block_given?
+        filtered_links = filtered_links.select do |url| 
+          not yield(url)
+        end
+      end
+
+      filtered_links
+    end
+    
+    def filter_hash_tags links
+      links.select{|url| not url.match(/\A#/)}
+    end
+
+    def filter_double_slashes links
+      links.select{|url| not url.match(/\/\//)}
+    end
+
+  end
+
   class Page
 
     attr_accessor :heading, :abstract, :links
+
+    extend Filters
 
     def initialize resource
       @resource = resource
@@ -36,33 +68,6 @@ module Wikipedia
 
     def get_links source_html
       source_html.scan(/<a.+?href="(.+?)"/im).flatten
-    end
-
-    def self.filter_links filters, links
-      filtered_links = links
-      if filters.include? :hash_tags
-        filtered_links = self.filter_hash_tags filtered_links
-      end
-
-      if filters.include? :double_slashes
-        filtered_links = self.filter_double_slashes filtered_links
-      end
-
-      if block_given?
-        filtered_links = filtered_links.select do |url| 
-          not yield(url)
-        end
-      end
-
-      filtered_links
-    end
-    
-    def self.filter_hash_tags links
-      links.select{|url| not url.match(/\A#/)}
-    end
-
-    def self.filter_double_slashes links
-      links.select{|url| not url.match(/\/\//)}
     end
 
   end
