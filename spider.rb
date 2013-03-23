@@ -38,13 +38,25 @@ class Page
 
 end
 
-resource = ARGV[0]
-if resource.nil?
+# example ARGV: ["-r", "Ruby_on_Rails", "-s", "links"]
+params = {}
+args = ARGV
+while args.size != 0
+  flag = args.shift.gsub(/\A-/,"")
+ 
+  if args.size > 0 && !args.first.match(/\A-/)
+    params[flag] = args.shift
+  else
+    params[flag] = nil
+  end
+end
+
+if !params.include?('r')
   puts %Q(Please provide resource name, i.e.: "Spacex", "V_for_vendetta")
   exit
 end
 
 
-wp = Page.new resource
+wp = Page.new params['r']
 wp.download.get_data
 puts wp.heading
