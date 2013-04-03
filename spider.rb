@@ -3,9 +3,43 @@ require 'open-uri'
 WIKIPEDIA_DOMAIN = 'http://en.wikipedia.org'
 
 module Wikipedia
+  module Filters
+    def take_links filters, links
+      filtered_links = links
+      if filters.include? :without_hash_tag
+        filtered_links = self.filter_without_hash_tags filtered_links
+      end
+
+      if filters.include? :relative
+        filtered_links = self.filter_relative filtered_links
+      end
+
+      if block_given?
+        acc = []
+        filtered_links.each do |url|
+          if yield(url)
+            acc << url
+          end
+        end
+        filtered_links = acc
+      end
+
+      filtered_links
+    end
+    
+    def filter_without_hash_tags links
+      links.select{|url| not url.match(/\A#/)}
+    end
+
+    def filter_relative links
+      links.select{|url| not url.match(/\/\//)}
+    end
+  end
+
   class Page
 
     attr_accessor :heading, :abstract, :links
+    extend Filters
 
     def initialize resource
       @resource = resource
@@ -37,36 +71,6 @@ module Wikipedia
       source_html.scan(/<a.+?href="(.+?)"/im).flatten
     end
 
-    def self.take_links filters, links
-      filtered_links = links
-      if filters.include? :without_hash_tag
-        filtered_links = self.filter_without_hash_tags filtered_links
-      end
-
-      if filters.include? :relative
-        filtered_links = self.filter_relative filtered_links
-      end
-
-      if block_given?
-        acc = []
-        filtered_links.each do |url|
-          if yield(url)
-            acc << url
-          end
-        end
-        filtered_links = acc
-      end
-
-      filtered_links
-    end
-    
-    def self.filter_without_hash_tags links
-      links.select{|url| not url.match(/\A#/)}
-    end
-
-    def self.filter_relative links
-      links.select{|url| not url.match(/\/\//)}
-    end
 
   end
 end
