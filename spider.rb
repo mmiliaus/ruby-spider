@@ -46,6 +46,16 @@ class Page
       filtered_links = self.filter_relative filtered_links
     end
 
+    if block_given?
+      acc = []
+      filtered_links.each do |url|
+        if yield(url)
+          acc << url
+        end
+      end
+      filtered_links = acc
+    end
+
     filtered_links
   end
   
@@ -77,5 +87,5 @@ wp.download.get_data
 f_links = Page.take_links(
                 [:without_hash_tag, :relative],
                 wp.links
-          )
+          ) { |url| not url.match(/(wiki|w)\/.+:.+/) }
 puts f_links
