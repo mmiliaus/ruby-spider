@@ -38,13 +38,19 @@ class Page
 
 end
 
-resource = ARGV[0]
-if resource.nil?
+args = ARGV
+params = {}
+while !args.empty?
+  flag = args.shift.gsub(/\A-/,'')
+  flag_val = args.shift
+  params[flag] = flag_val
+end
+
+if !params.include?('r')
   puts %Q(Please provide resource name, i.e.: "Spacex", "V_for_vendetta")
   exit
 end
 
-
-wp = Page.new resource
+wp = Page.new params['r']
 wp.download.get_data
 puts wp.heading
