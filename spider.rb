@@ -36,6 +36,27 @@ class Page
     source_html.scan(/<a.+?href="(.+?)"/im).flatten
   end
 
+  def self.take_links filters, links
+    filtered_links = links
+    if filters.include? :without_hash_tag
+      filtered_links = self.filter_without_hash_tags filtered_links
+    end
+
+    if filters.include? :relative
+      filtered_links = self.filter_relative filtered_links
+    end
+
+    filtered_links
+  end
+  
+  def self.filter_without_hash_tags links
+    links.select{|url| not url.match(/\A#/)}
+  end
+
+  def self.filter_relative links
+    links.select{|url| not url.match(/\/\//)}
+  end
+
 end
 
 args = ARGV.clone
@@ -53,4 +74,8 @@ end
 
 wp = Page.new params[:r]
 wp.download.get_data
-puts wp.heading
+f_links = Page.take_links(
+                [:without_hash_tag, :relative],
+                wp.links
+          )
+puts f_links
