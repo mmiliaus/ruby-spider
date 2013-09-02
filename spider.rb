@@ -77,7 +77,6 @@ module Wikipedia
     end
 
     def get_abstract source_html
-      # m = source_html.match(/\<\/table>\s+(<p>.+)<table.+?id="toc"/im)
       m = source_html.match(/\<table.+?infobox.+?>.+<\/table>\s+(.+)<div.+?id="toc".*?>/im)
       m[1]
     end
